@@ -4,6 +4,24 @@ ENV PYTHONUNBUFFERED=1
 RUN set -ex && \
     apk add --no-cache gcc g++ musl-dev python3 openjdk17 ruby iptables ip6tables
 
+# Install GO
+RUN set -ex && \
+    apk add --no-cache go
+
+# Install Rust
+RUN set -ex && \
+    apk add --no-cache curl && \
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    source $HOME/.cargo/env
+
+# Install Kotlin
+RUN set -ex && \
+    apk add --no-cache unzip && \
+    wget https://github.com/JetBrains/kotlin/releases/download/v1.4.32/kotlin-compiler-1.4.32.zip && \
+    unzip kotlin-compiler-1.4.32.zip -d /usr/local && \
+    ln -s /usr/local/kotlinc/bin/kotlin /usr/bin/kotlin && \
+    ln -s /usr/local/kotlinc/bin/kotlinc /usr/bin/kotlinc
+
 RUN set -ex && \
     apk add --no-cache chromium lsof
 

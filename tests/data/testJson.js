@@ -1,5 +1,50 @@
 const testCases = [
     {
+        name: 'go : hello world',
+        reqObject:{
+            language: 'go',
+            script: 
+            'package main\n' + 
+            'import "fmt"\n' + 
+            'func main() {\n '+
+            '   fmt.Println("Hello, World!")\n' + 
+            '}\n',
+        },
+        expectedResponse: {
+            val: 'Hello, World!\n',
+            status: 200,
+            error: 0,
+        },
+    },
+    {
+        name: 'rust : hello world',
+        reqObject: {
+            language: 'rust',
+            script: 'fn main() {\n'+
+            '    println!("Hello, World!");\n' +
+            '}\n',
+        },
+        expectedResponse: {
+            val: 'Hello, World!\n',
+            status: 200,
+            error: 0,
+        },
+    },
+    {
+        name: 'kotlin : hello world',
+        reqObject: {
+            language: 'kotlin',
+            script: 'fun main() {\n'+
+            '    println("Hello, World!")\n'+
+            '}\n',
+        },
+        expectedResponse: {
+            val: 'Hello, World!\n',
+            status: 200,
+            error: 0,
+        },
+    },
+    {
         name: 'cpp : hello world',
         reqObject: {
             language: 'cpp',
@@ -279,6 +324,8 @@ const testCases = [
         reqObject: {
             language: 'promptv1',
             prompt: 'The question is what is 2 plus 2. The answer given is 4.',
+            question: 'What is 2 plus 2?',
+            userAnswer: '4',
         },
         expectedResponse: {
             val: {},
@@ -291,6 +338,8 @@ const testCases = [
         reqObject: {
             language: 'promptv2',
             prompt: 'The question is what is 2 plus 2. The answer given is 4.',
+            question: 'What is 2 plus 2?',
+            userAnswer: '4',
         },
         expectedResponse: {
             val: {},

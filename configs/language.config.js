@@ -1,8 +1,30 @@
-const { CPP, C, PYTHON, JAVA, NODEJS, RUBY, PROMPTV1, PROMPTV2 } = require('../enums/supportedLanguages')
+const { compile } = require('morgan')
+const { GO, RUST, KOTLIN, CPP, C, PYTHON, JAVA, NODEJS, RUBY, PROMPTV1, PROMPTV2 } = require('../enums/supportedLanguages')
 const ONE_MB = 1024 // ulimit uses Kilobyte as base unit
 const ALLOWED_RAM = process.env.ALLOWED_RAM || 512
 
 const LANGUAGES_CONFIG = {
+    [GO]: {
+        compile: 'go build -o solution solution.go',
+        run: './solution',
+        timeout: 5, 
+        filename: 'solution.go',
+        memory: ALLOWED_RAM * ONE_MB, 
+    },
+    [RUST]: {
+        compile: 'rustc -o solution solution.rs',
+        run: './solution',
+        timeout: 5, 
+        filename: 'solution.rs',
+        memory: ALLOWED_RAM * ONE_MB, 
+    },
+    [KOTLIN]: {
+        compile: 'kotlinc solution.kt -include-runtime -d solution.jar',
+        run: 'java -jar solution.jar',
+        timeout: 5, 
+        filename: 'solution.kt',
+        memory: ALLOWED_RAM * ONE_MB, 
+    },
     [C]: {
         compile: 'gcc -o a.out solution.c',
         run: './a.out',
