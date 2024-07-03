@@ -7,14 +7,8 @@ const path = require('path')
 const sqlite3 = require('sqlite3').verbose()
 const { PYTHON, PROMPTV1, PROMPTV2 } = require('../enums/supportedLanguages')
 const logger = require('../loader').helpers.l
-async function loadMistralClient() {
-    const { default: MistralClient } = await import('@mistralai/mistralai');
-    return new MistralClient(process.env.MISTRAL_API_KEY);
-}
-let mistral;
-loadMistralClient().then(client => {
-    mistral = client;
-}).catch(error => console.error('Failed to load MistralClient:', error));
+const OpenAI = require('openai')
+const openai = new OpenAI()
 const { LANGUAGES_CONFIG } = require('../configs/language.config')
 const Joi = require('joi')
 const memoryUsedThreshold = process.env.MEMORY_USED_THRESHOLD || 512
@@ -143,7 +137,7 @@ const _executePrompt = async (
     points = 10, // Maximum points that can be given by open AI
 ) => {
     const promises = Array.from({ length: count }, () =>
-        mistral.chat.completions.create({
+        openai.chat.completions.create({
             messages: [
                 {
                     role: 'system',
@@ -168,9 +162,9 @@ const _executePrompt = async (
 
     evaluatedResponses.forEach(res => {
         if (res.status === 'fulfilled') {
-            let mistralResponse = {}
+            let openAIResponse = {}
             if (res.value.choices[0]?.message) {
-                mistralResponse = JSON.parse(res.value.choices[0].message.content)
+                openAIResponse = JSON.parse(res.value.choices[0].message.content)
             }
 
             const schema = Joi.object({
@@ -182,12 +176,12 @@ const _executePrompt = async (
                 points: Joi.number().integer().required(),
             })
 
-            const validatedData = schema.validate(mistralResponse)
-            if (validatedData.error || mistralResponse.points !== points) {
+            const validatedData = schema.validate(openAIResponse)
+            if (validatedData.error || openAIResponse.points !== points) {
                 logger.error(`The response received from Open AI failed the validation check: ${JSON.stringify(validatedData)}`)
                 ++errorResponsesCount
             } else {
-                allValidResponses.push(mistralResponse)
+                allValidResponses.push(openAIResponse)
             }
         } else {
             logger.error('No response received from Open AI')
